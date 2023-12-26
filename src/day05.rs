@@ -40,7 +40,7 @@ fn is_nice_p2(s: &str) -> bool {
     fn check_for_duplicated_pair(s: &str) -> bool {
         if s.len() >= 4 {
             for i in 0..s.len() - 3 {
-                if s[i+2..].contains(&s[i..i + 2]) {
+                if s[i + 2..].contains(&s[i..i + 2]) {
                     return true;
                 }
             }
