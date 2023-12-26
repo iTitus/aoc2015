@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 use nalgebra::{Dim, Matrix, Scalar, Storage, Vector2};
 use nalgebra::Vector3;
-use num::{Rational64, Signed, Zero};
+use num::{Rational64, Signed};
 use num::rational::Ratio;
 
 pub type Rational128 = Ratio<i128>;
