@@ -3,10 +3,11 @@ use std::hash::Hash;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
-use nalgebra::Vector3;
 use nalgebra::{Dim, Matrix, Scalar, Storage, Vector2};
+use nalgebra::{SVector, Vector3};
 use num::rational::Ratio;
 use num::{Rational64, Signed};
+use thiserror::Error;
 
 pub type Rational128 = Ratio<i128>;
 pub type Vec2i = Vector2<i64>;
@@ -225,4 +226,38 @@ pub fn parse_lines<T: FromStr, B: FromIterator<T>>(s: &str) -> Result<B, <T as F
         .filter(|l| !l.is_empty())
         .map(str::parse)
         .collect::<Result<_, _>>()
+}
+
+#[derive(Error, Debug)]
+pub enum ParseVecError<T> {
+    #[error("missing element")]
+    MissingElement,
+    #[error("too many elements")]
+    TooManyElements,
+    #[error("parse error")]
+    ParseError(#[from] T),
+}
+
+pub fn parse_vec<T: Scalar + FromStr, const D: usize>(
+    s: &str,
+) -> Result<SVector<T, D>, ParseVecError<<T as FromStr>::Err>> {
+    let mut it = s
+        .trim_matches(|c: char| {
+            matches!(c, '(' | ')' | '[' | ']' | '{' | '}' | '|') || c.is_whitespace()
+        })
+        .split(|c: char| matches!(c, ',' | ';' | '|') || c.is_whitespace())
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(str::parse);
+
+    let mut data: [Option<T>; D] = std::array::from_fn(|_| None);
+    for elem in data.iter_mut() {
+        *elem = Some(it.next().ok_or(ParseVecError::MissingElement)??);
+    }
+
+    if it.next().is_some() {
+        return Err(ParseVecError::TooManyElements);
+    }
+
+    Ok(SVector::from_iterator(data.into_iter().flatten()))
 }
