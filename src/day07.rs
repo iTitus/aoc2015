@@ -133,6 +133,8 @@ pub fn part2(input: &FxHashMap<String, Gate>) -> u16 {
 
 #[cfg(test)]
 mod tests {
+    use pretty_assertions::assert_eq;
+
     use super::*;
 
     const INPUT: &str = r#"123 -> x
