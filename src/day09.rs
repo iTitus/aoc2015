@@ -2,9 +2,9 @@ use std::ops::Add;
 
 use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::Itertools;
-use nalgebra::{Dim, DMatrix, Matrix, Scalar, Storage};
-use num::{PrimInt, Unsigned};
+use nalgebra::{DMatrix, Dim, Matrix, Scalar, Storage};
 use num::traits::{CheckedShr, WrappingAdd, WrappingSub};
+use num::{PrimInt, Unsigned};
 use rustc_hash::FxHashMap;
 
 #[aoc_generator(day9)]
@@ -119,7 +119,6 @@ fn held_karp<T: Scalar + Ord + Add<Output = T>, C: Dim, R: Dim, S: Storage<T, R,
 
 #[aoc(day9, part1)]
 pub fn part1(input: &DMatrix<i64>) -> i64 {
-    let qr = input.full_piv_lu();
     held_karp(input)
 }
 
