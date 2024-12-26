@@ -39,16 +39,16 @@ impl FromStr for HappinessChange {
     }
 }
 
-fn score<S: AsRef<str>>(mapped: &FxHashMap<(&str, &str), i64>, seating: &[S]) -> i64 {
+fn score<S: AsRef<str>>(happiness_changes: &FxHashMap<(&str, &str), i64>, seating: &[S]) -> i64 {
     seating
         .iter()
         .circular_tuple_windows()
         .map(|(p, n)| {
-            mapped
+            happiness_changes
                 .get(&(p.as_ref(), n.as_ref()))
                 .copied()
                 .unwrap_or_default()
-                + mapped
+                + happiness_changes
                     .get(&(n.as_ref(), p.as_ref()))
                     .copied()
                     .unwrap_or_default()
@@ -56,12 +56,12 @@ fn score<S: AsRef<str>>(mapped: &FxHashMap<(&str, &str), i64>, seating: &[S]) ->
         .sum()
 }
 
-fn solve_part1(input: &[HappinessChange]) -> i64 {
-    let mapped: FxHashMap<(&str, &str), i64> = input
+fn solve(input: &[HappinessChange]) -> i64 {
+    let happiness_changes: FxHashMap<(&str, &str), i64> = input
         .iter()
         .map(|c| ((c.person.as_str(), c.neighbor.as_str()), c.happiness))
         .collect();
-    let people = mapped
+    let people = happiness_changes
         .keys()
         .flat_map(|&(a, b)| [a, b])
         .sorted_unstable()
@@ -70,14 +70,14 @@ fn solve_part1(input: &[HappinessChange]) -> i64 {
     people
         .iter()
         .permutations(people.len())
-        .map(|s| score(&mapped, &s))
+        .map(|s| score(&happiness_changes, &s))
         .max()
         .unwrap()
 }
 
 #[aoc(day13, part1)]
 pub fn part1(input: &[HappinessChange]) -> i64 {
-    solve_part1(input)
+    solve(input)
 }
 
 #[aoc(day13, part2)]
@@ -89,7 +89,7 @@ pub fn part2(input: &[HappinessChange]) -> i64 {
         happiness: 0,
     });
 
-    solve_part1(&new_input)
+    solve(&new_input)
 }
 
 #[cfg(test)]
